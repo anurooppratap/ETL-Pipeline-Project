@@ -1,0 +1,27 @@
+version: '3' # Specifies the version of Docker Compose being used
+services: # Defines the services (containers) that need to be created and managed by Docker Compose
+  # This section defines the POSTGRES Service
+  postgres:
+    image: postgres:13 # Specifies the Docker image to be used for this service.
+    container_name: postgres_db # Names the container postgres_db for easy reference.
+    environment: # Sets environment variables to configure the PostgreSQL instance
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports: # Maps the PostgreSQL service's internal port (5432) to the host's port (5432). This allows you to access the database on your machine using localhost:5432
+      - "5432:5432"
+    volumes: # Mounts a volume to persist PostgreSQL data between container restarts
+      - postgres_data:/var/lib/postgresql/data
+      # postgres_data is the named volume on the host system
+      # /var/lib/postgresql/data is the directory inside the container where PostgreSQL stores its data
+    networks: # Attaches the service to a custom Docker network named airflow_network
+      # This allows containers in the same network to communicate with each other using their container names
+      - airflow_network
+
+# This portion of the docker-compose.yml file defines a custom network named airflow_network
+networks: # Declares the list of networks used in the Docker Compose setup. Networks allow containers to communicate with each other securely and efficiently
+  airflow_network: # This specifies a custom network named airflow_network
+    external: false # Specifies that the network is not external—meaning Docker Compose will create and manage this network when you run docker-compose up. If set to true, Docker Compose would look for an existing network with the name airflow_network instead of creating a new one
+
+volumes: # The volumes section in the docker-compose.yml file defines the named volumes that will be used by the services in the Docker Compose configuration
+  postgres_data:
